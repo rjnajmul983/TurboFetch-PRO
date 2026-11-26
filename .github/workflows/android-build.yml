@@ -1,4 +1,4 @@
-name: TurboFetch PRO - Restoration Ultimate
+name: TurboFetch PRO - Restoration Extreme Next
 on:
   workflow_dispatch:
     inputs:
@@ -43,7 +43,7 @@ jobs:
           python3 - "$project" <<'PY'
           import zipfile,pathlib,sys,stat,shutil
           repo=pathlib.Path.cwd(); root=pathlib.Path(sys.argv[1]).resolve()
-          archive=repo/'TurboFetch-PRO-v1.0.0-restoration-ultimate-source.zip'
+          archive=repo/'TurboFetch-PRO-v1.0.2-restoration-extreme-next-source.zip'
           with zipfile.ZipFile(archive) as z:
               for i in z.infolist():
                   if not (root/i.filename).resolve().is_relative_to(root) or stat.S_ISLNK(i.external_attr>>16):
@@ -100,7 +100,7 @@ jobs:
         working-directory: ${{ steps.source.outputs.dir }}
         run: |
           set -euo pipefail
-          bash tools/test-extra.sh hyper | tee build/logs/speed-benchmark.txt
+          bash tools/test-next-compare.sh | tee build/logs/speed-benchmark.csv
       - name: Optional large file regression tests
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.large_test }}
         working-directory: ${{ steps.source.outputs.dir }}
@@ -108,7 +108,8 @@ jobs:
           set -euo pipefail
           bash tools/test-extra.sh large | tee build/logs/large.txt
           bash tools/test-extra.sh large-direct | tee build/logs/large-direct.txt
-      - name: Restore original features and inject HyperSpeed engine
+          bash tools/test-extra.sh large-pipeline | tee build/logs/large-pipeline.txt
+      - name: Restore original features and inject Extreme engine
         working-directory: ${{ steps.source.outputs.dir }}
         env:
           KEYSTORE_B64: ${{ secrets.TURBO_KEYSTORE_B64 }}
